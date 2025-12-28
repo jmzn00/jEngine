@@ -5,11 +5,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 project (GameDevelopmentProject)
 
 set(PROJECT_SOURCE_FILES
-  source/main.cpp
+  
 )
 # Add the application
 include_directories(source)
-add_executable(${PROJECT_NAME} ${PROJECT_SOURCE_FILES})
+add_executable(${PROJECT_NAME} ${PROJECT_SOURCE_FILES} "source/snake.cpp")
 
 # Add GLFW library
 add_subdirectory(thirdparty/glfw-3.4 "${CMAKE_CURRENT_BINARY_DIR}/glfw_build")
