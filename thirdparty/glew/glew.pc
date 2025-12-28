@@ -1,6 +1,6 @@
-prefix=C:/Users/mansi/Documents/GD-Engine-lesson-1-0/out/install/x64-Debug
+prefix=C:/Users/mansi/Documents/jEngine/out/install/x64-Debug
 exec_prefix=${prefix}
-libdir=C:/Users/mansi/Documents/GD-Engine-lesson-1-0/out/install/x64-Debug/lib
+libdir=C:/Users/mansi/Documents/jEngine/out/install/x64-Debug/lib
 includedir=${prefix}/include
 
 Name: glew
