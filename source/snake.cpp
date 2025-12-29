@@ -7,6 +7,7 @@
 #include <map>
 #include <string>
 #include <chrono>
+#include <snake.h>
 struct Vec2
 {
     float x, y;
@@ -148,9 +149,9 @@ void DrawScore();
 void DrawGameOver();
 void DrawStartScreen();
 
-int main()
+int runSnake()
 {
-    if(!glfwInit())
+    if (!glfwInit())
     {
         std::cout << "Error Initialising GLFW" << std::endl;
         return -1;
@@ -162,7 +163,7 @@ int main()
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
     GLFWwindow* window = glfwCreateWindow(800, 600, "jEngine", nullptr, nullptr);
-    if(!window)
+    if (!window)
     {
         std::cout << "Error creating window" << std::endl;
         glfwTerminate();
@@ -216,7 +217,7 @@ int main()
     glLinkProgram(shaderProgram);
 
     glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-    if(!success)
+    if (!success)
     {
         glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
         std::cerr << "ERROR:SHADER_PROGRAM_LINKING_FAILED: " << infoLog << std::endl;
@@ -231,7 +232,7 @@ int main()
     uScaleLoc = glGetUniformLocation(shaderProgram, "uScale");
     uColorLoc = glGetUniformLocation(shaderProgram, "uColor");
 
-    const float verticies[] = 
+    const float verticies[] =
     {
         -0.5f, -0.5f,
         0.5f, -0.5f,
@@ -260,9 +261,9 @@ int main()
         // Calculate Delta Time
         auto currentTime = std::chrono::high_resolution_clock::now();
         float deltaTime = std::chrono::duration<float>(currentTime - lastTime).count();
-        lastTime = currentTime;  
+        lastTime = currentTime;
 
-        if(deltaTime > 0.0f)
+        if (deltaTime > 0.0f)
             gFps = (int)(1.0f / deltaTime);
 
         glfwPollEvents();

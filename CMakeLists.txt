@@ -9,7 +9,7 @@ set(PROJECT_SOURCE_FILES
 )
 # Add the application
 include_directories(source)
-add_executable(${PROJECT_NAME} ${PROJECT_SOURCE_FILES} "source/snake.cpp")
+add_executable(${PROJECT_NAME} ${PROJECT_SOURCE_FILES} "source/snake.cpp" "source/main.cpp" "include/snake.h" "include/vec.h" "include/input.h" "source/Input.cpp")
 
 # Add GLFW library
 add_subdirectory(thirdparty/glfw-3.4 "${CMAKE_CURRENT_BINARY_DIR}/glfw_build")
@@ -28,3 +28,5 @@ target_link_libraries(${PROJECT_NAME}
     glfw 
     glew_s
 )
+target_include_directories(${PROJECT_NAME} PRIVATE include)
+
