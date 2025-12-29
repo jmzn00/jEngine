@@ -84,10 +84,13 @@ const int FONT_WIDTH = 5;
 const int FONT_HEIGHT = 5;
 const int FONT_SPACING = 1;
 
+int gFps;
+
+
 // Character definitions (0 = empty, 1 = filled)
 std::map <char, std::vector<int>> fontMap =
 {
-        {' ', {0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0}},
+    {' ', {0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0}},
     {'A', {0,1,1,0,0, 1,0,0,1,0, 1,1,1,1,0, 1,0,0,1,0, 1,0,0,1,0}},
     {'B', {1,1,1,0,0, 1,0,0,1,0, 1,1,1,0,0, 1,0,0,1,0, 1,1,1,0,0}},
     {'C', {0,1,1,1,0, 1,0,0,0,0, 1,0,0,0,0, 1,0,0,0,0, 0,1,1,1,0}},
@@ -96,7 +99,7 @@ std::map <char, std::vector<int>> fontMap =
     {'F', {1,1,1,1,0, 1,0,0,0,0, 1,1,1,0,0, 1,0,0,0,0, 1,0,0,0,0}},
     {'G', {0,1,1,1,0, 1,0,0,0,0, 1,0,1,1,0, 1,0,0,1,0, 0,1,1,1,0}},
     {'H', {1,0,0,1,0, 1,0,0,1,0, 1,1,1,1,0, 1,0,0,1,0, 1,0,0,1,0}},
-    {'I', {1,1,1,0,0, 0,1,0,0,0, 0,1,0,0,0, 0,1,0,0,0, 1,1,1,0,0}},
+    {'I', {0,1,1,1,0, 0,0,1,0,0, 0,0,1,0,0, 0,0,1,0,0, 0,1,1,1,0}},
     {'J', {0,0,1,1,0, 0,0,0,1,0, 0,0,0,1,0, 1,0,0,1,0, 0,1,1,0,0}},
     {'K', {1,0,0,1,0, 1,0,1,0,0, 1,1,0,0,0, 1,0,1,0,0, 1,0,0,1,0}},
     {'L', {1,0,0,0,0, 1,0,0,0,0, 1,0,0,0,0, 1,0,0,0,0, 1,1,1,1,0}},
@@ -158,7 +161,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-    GLFWwindow* window = glfwCreateWindow(800, 600, "SnakeGame", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(800, 600, "jEngine", nullptr, nullptr);
     if(!window)
     {
         std::cout << "Error creating window" << std::endl;
@@ -257,7 +260,10 @@ int main()
         // Calculate Delta Time
         auto currentTime = std::chrono::high_resolution_clock::now();
         float deltaTime = std::chrono::duration<float>(currentTime - lastTime).count();
-        lastTime = currentTime;
+        lastTime = currentTime;  
+
+        if(deltaTime > 0.0f)
+            gFps = (int)(1.0f / deltaTime);
 
         glfwPollEvents();
 
@@ -277,7 +283,7 @@ void UpdateGame(float deltaTime)
 {
     if(gameStarted && !gameOver)
     {
-        timeSinceLastUpdate += deltaTime;
+        timeSinceLastUpdate += deltaTime;        
 
         if (timeSinceLastUpdate >= snakeSpeed)
         {
@@ -361,7 +367,7 @@ void RenderGame(GLFWwindow* window)
         DrawSnake();
         DrawScore();
     }
-
+    DrawText("FPS: " + std::to_string(gFps), 0.65f, 0.95f, 0.007f, Vec3(0.9f, 0.9f, 0.9f));
     glBindVertexArray(0);
     glfwSwapBuffers(window);
 }
@@ -495,6 +501,8 @@ void DrawGameOver()
     }
     DrawText("GAME OVER", 0.0f, 0.1f, 0.03f, Vec3(1.0f, 0.3f, 0.3f));
     // draw Instructions
+
+    DrawText("PRESS R TO RESTART", 0.0f, -0.3f, 0.01f, Vec3(1.0f, 0.3f, 0.3f));
 }
 void DrawStartScreen()
 {
@@ -503,6 +511,8 @@ void DrawStartScreen()
     DrawText("SNAKE GAME", 0.0f, 0.3f, 0.025f, Vec3(0.2f, 0.8f, 0.3f));
 
     // Draw Instructions
+
+    DrawText("made with jEngine", 0.0f, -0.7f, 0.007f, Vec3(0.2f, 0.8f, 0.3f));
 }
 void SpawnFruit()
 {
