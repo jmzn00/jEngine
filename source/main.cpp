@@ -28,7 +28,44 @@ struct Object2D
 	Behaviour behaviour;
 	Mesh* mesh;
 };
+Mesh CreateMesh(const float* verts, size_t vertFloatCount,
+	const unsigned int* idx, size_t indexCount)
+{
+	// vao describes how to interpret vertex data
+	// vbo holds vertex data
+	// ebo holds inices that tell openGl which vertices in the vbo to use and in what order
 
+	Mesh m{};
+	m.indexCount = (GLsizei)indexCount;
+
+	glGenVertexArrays(1, &m.vao);
+	glGenBuffers(1, &m.vbo);
+	glGenBuffers(1, &m.ebo);
+
+	glBindVertexArray(m.vao);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m.vbo);
+	glBufferData(GL_ARRAY_BUFFER, vertFloatCount * sizeof(float), verts, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m.ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(unsigned int), idx, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	glBindVertexArray(0);
+	return m;
+}
+void DeleteMesh(Mesh* m)
+{
+	if (!m) return;
+
+	if (m->vao) glDeleteVertexArrays(1, &m->vao);
+	if (m->vbo) glDeleteBuffers(1, &m->vbo);
+	if (m->ebo) glDeleteBuffers(1, &m->ebo);
+
+	m->vao = m->vbo = m->ebo = 0;
+}
 
 int main()
 {	
@@ -120,17 +157,7 @@ int main()
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
-	/*
-	float vertices[] =
-	{
-		// pos				// colors
-		0.0f, 0.5f, 0.0f,	1.0f, 0.0f, 0.0f, 
-	   -0.5f,-0.5f, 0.0f,	0.0f, 1.0f, 0.0f,
-	    0.5f,-0.5f, 0.0f,   0.0f, 0.0f, 1.0f
-	};
-	*/
-	Mesh rectMesh;
-
+	// ---------- RECTANGLE MESH ----------
 	float rectVerts[] =
 	{
 		-0.08f, 0.08f, 0.0f,
@@ -140,33 +167,13 @@ int main()
 	};
 	unsigned int rectIdx[] =
 	{
-		0,1,2,
-		2,3,0
-	};
+		0,1,2, // tri 1
+		2,3,0 // tri 2
+	};		
+	Mesh rectMesh = CreateMesh(rectVerts, sizeof(rectVerts) / sizeof(float),
+		rectIdx, sizeof(rectIdx) / sizeof(unsigned int));
 
-	GLuint VAO = 0, VBO = 0, EBO = 0;
-	glGenVertexArrays(1, &rectMesh.vao);
-	glGenBuffers(1, &rectMesh.vbo);
-	glGenBuffers(1, &rectMesh.ebo);
-
-	glBindVertexArray(rectMesh.vao);
-
-	glBindBuffer(GL_ARRAY_BUFFER, rectMesh.vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(rectVerts), rectVerts, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rectMesh.ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(rectIdx), rectIdx, GL_STATIC_DRAW);
-
-	// position attribute (location = 0)
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	glBindVertexArray(0);
-
-	rectMesh.indexCount = 6;
-
-	Mesh triMesh;
-
+	// ---------- TRIANGLE MESH ----------
 	float triVerts[]
 	{
 		0.0f, 0.10f, 0.0f,
@@ -174,32 +181,49 @@ int main()
 		0.10f, -0.10f, 0.0f
 	};
 	unsigned int triIdx[] = { 0,1,2 };
+	Mesh triMesh = CreateMesh(triVerts, sizeof(triVerts) / sizeof(float),
+		triIdx, sizeof(triIdx) / sizeof(unsigned int));
 
-	glGenVertexArrays(1, &triMesh.vao);
-	glGenBuffers(1, &triMesh.vbo);
-	glGenBuffers(1, &triMesh.ebo);
+	// ---------- RHOMBUS MESH ----------
+	float rhoVerts[] = 
+	{
+		-0.1f, 0.0f, 0.0f,
+		0.1f, 0.0f, 0.0f,
+		0.0f, 0.2f, 0.0f,
+		0.0f, -0.2f, 0.0f		
+	};
+	unsigned int rhoIdx[] = 
+	{
+		0, 2, 1,
+		0, 1, 3
+	};
+	Mesh rhoMesh = CreateMesh(rhoVerts, sizeof(rhoVerts) / sizeof(float),
+		rhoIdx, sizeof(rhoIdx) / sizeof(unsigned int));		
 
-	glBindVertexArray(triMesh.vao);
-
-	glBindBuffer(GL_ARRAY_BUFFER, triMesh.vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(triVerts), triVerts, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, triMesh.ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(triIdx), triIdx, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	glBindVertexArray(0);
-
-	triMesh.indexCount = 3;
+	// ---------- PENTAGON MESH ----------
+	float pentaVerts[] =
+	{
+		0.0f, 0.15f, 0.0f, // top 0
+		0.15f, 0.0f, 0.0f, // right 1
+		0.1f, -0.2f, 0.0f, // bottom right 2
+		-0.1f, -0.2, 0.0f, // bottom left 3
+		-0.15f, 0.0f, 0.0f // left 4
+	};
+	unsigned int pentaIdx[] =
+	{
+		0, 1, 2,
+		0, 2, 3,
+		0, 3, 4
+	};
+	Mesh pentaMesh = CreateMesh(pentaVerts, sizeof(pentaVerts) / sizeof(float),
+		pentaIdx, sizeof(pentaIdx) / sizeof(unsigned int));
 
 	std::vector<Object2D> objects = {
 	{{-0.6f,  0.4f}, {-0.6f,  0.4f}, {1,0,0}, Behaviour::Static, &rectMesh},
 	{{-0.2f,  0.4f}, {-0.2f,  0.4f}, {0,1,0}, Behaviour::Animated, &triMesh},
 	{{ 0.2f,  0.4f}, { 0.2f,  0.4f}, {0,0,1}, Behaviour::Animated, &rectMesh},
-	{{-0.2f,  0.0f}, {-0.2f,  0.0f}, {1,1,0}, Behaviour::Static, &triMesh},
-	{{ 0.2f,  0.0f}, { 0.2f,  0.0f}, {1,0,1}, Behaviour::PlayerInput, &rectMesh},
+	{{-0.2f,  0.0f}, {-0.2f,  0.0f}, {1,1,0}, Behaviour::Static, &pentaMesh},
+	{{ 0.2f,  0.0f}, { 0.2f,  0.0f}, {1,0,1}, Behaviour::PlayerInput, &rhoMesh},
 	};	
 
 	glUseProgram(shaderProgram);
@@ -215,8 +239,7 @@ int main()
 		glClearColor(0.1f, 0.1f, 0.12f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glUseProgram(shaderProgram);
-		glBindVertexArray(VAO);
+		glUseProgram(shaderProgram);		
 
 		for (auto& obj : objects)
 		{
@@ -234,17 +257,20 @@ int main()
 			glUniform2f(uOffsetLoc, obj.pos.x, obj.pos.y);
 			glUniform3f(uColorLoc, obj.color.x, obj.color.y, obj.color.z);
 
-			glBindVertexArray(obj.mesh->vao);
-			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+			glBindVertexArray(obj.mesh -> vao);
+			glDrawElements(GL_TRIANGLES, obj.mesh -> indexCount, GL_UNSIGNED_INT, 0);
 		}
 		glBindVertexArray(0);		
 		glfwSwapBuffers(window);				
 	}
 
-	// cleanup
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
-	glDeleteBuffers(1, &EBO);
+	// -- cleanup --	
+
+	DeleteMesh(&rectMesh);
+	DeleteMesh(&triMesh);
+	DeleteMesh(&rhoMesh);
+	DeleteMesh(&pentaMesh);
+	
 	glDeleteProgram(shaderProgram);
 
 	glfwDestroyWindow(window);
