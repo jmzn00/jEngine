@@ -5,28 +5,17 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 project (GameDevelopmentProject)
 
 set(PROJECT_SOURCE_FILES
-  
+  source/main.cpp
+  source/Game.h
+  source/Game.cpp
 )
+include_directories(engine/thirdparty/glew/include)
 # Add the application
 include_directories(source)
-add_executable(${PROJECT_NAME} ${PROJECT_SOURCE_FILES} "source/snake.cpp" "source/main.cpp" "include/snake.h" "include/vec.h" "include/input.h" "source/Input.cpp")
+add_executable(${PROJECT_NAME} ${PROJECT_SOURCE_FILES} "source/Game.h" "source/Game.cpp")
 
-# Add GLFW library
-add_subdirectory(thirdparty/glfw-3.4 "${CMAKE_CURRENT_BINARY_DIR}/glfw_build")
-include_directories(thirdparty/glfw-3.4/include)
-
-# Add Glew library
-add_compile_definitions(GLEW_NO_GLU)
-set(BUILD_UTILS OFF CACHE BOOL "utilities" FORCE)
-add_subdirectory(thirdparty/glew/build/cmake "${CMAKE_CURRENT_BINARY_DIR}/glew_build")
-include_directories(thirdparty/glew/include)
-set_property(TARGET glew_s PROPERTY FOLDER GLEW)
-set_property(TARGET glew PROPERTY FOLDER GLEW)
-
-# Link all thirdparty libraries
-target_link_libraries(${PROJECT_NAME} 
-    glfw 
-    glew_s
-)
-target_include_directories(${PROJECT_NAME} PRIVATE include)
+add_subdirectory(engine "${CMAKE_CURRENT_BINARY_DIR}/engine_build")
+include_directories(engine/source)
+# Link engine library
+target_link_libraries(${PROJECT_NAME} Engine)
 
