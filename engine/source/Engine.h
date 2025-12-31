@@ -1,6 +1,7 @@
 #pragma once
 #include "input/InputManager.h"
 #include "graphics/GraphicsAPI.h"
+#include "render/RenderQueue.h"
 #include<memory>
 #include<chrono>
 
@@ -29,11 +30,13 @@ namespace eng
 		Application* GetApplication();
 		InputManager& GetInputManager();
 		GraphicsAPI& GetGraphicsAPI();
+		RenderQueue& GetRenderQueue();
 	private:
 		std::unique_ptr<Application> m_application;
 		std::chrono::steady_clock::time_point m_lastTimePoint;
 		GLFWwindow* m_window = nullptr;
 		InputManager m_inputManager;
 		GraphicsAPI m_graphicsAPI;
+		RenderQueue m_renderQueue;
 	};
 }

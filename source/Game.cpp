@@ -31,6 +31,40 @@ bool Game::Init()
 
 	auto& graphicsAPI = eng::Engine::GetInstance().GetGraphicsAPI();
 	auto shaderProgram = graphicsAPI.CreateShaderProgram(vertexShaderSource, fragmentShaderSource);
+	m_material.SetShaderProgram(shaderProgram);
+
+	std::vector<float> vertices =
+	{
+		0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+		-0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
+		-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
+		0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 0.0f
+	};
+	std::vector<unsigned int> indices =
+	{
+		0, 1, 2,
+		0, 2, 3
+	};
+
+	eng::VertexLayout vertexLayout;
+
+	// Position
+	vertexLayout.elements.push_back({
+		0,
+		3,
+		GL_FLOAT,
+		0
+		});
+	// Color
+	vertexLayout.elements.push_back({
+		1, 
+		3, 
+		GL_FLOAT,
+		sizeof(float) * 3
+		});
+	vertexLayout.stride = sizeof(float) * 6;
+
+	m_mesh = std::make_unique<eng::Mesh>(vertexLayout, vertices, indices);
 	return true;
 }
 void Game::Update(float deltaTime)
@@ -42,7 +76,12 @@ void Game::Update(float deltaTime)
 		std::cout << "[A] pressed" << std::endl;
 	}
 
+	eng::RenderCommand command;
+	command.material = &m_material;
+	command.mesh = m_mesh.get();
 
+	auto& renderQueue = eng::Engine::GetInstance().GetRenderQueue();
+	renderQueue.Submit(command);
 }
 void Game::Destroy()
 {
