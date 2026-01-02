@@ -10,6 +10,5 @@ public:
 	void Destroy() override;
 
 private:
-	eng::Material m_material;
-	std::unique_ptr<eng::Mesh> m_mesh;
+	eng::Scene* m_scene = nullptr;
 };
