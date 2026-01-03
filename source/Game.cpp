@@ -8,12 +8,10 @@ bool Game::Init()
 
 	auto camera = m_scene->CreateObject("Camera");
 	camera->AddComponent(new eng::CameraComponent());
-	camera->SetPosition(glm::vec3(0.0f, 0.0f, 2.0f));
+	camera->SetPosition(glm::vec3(0.0f, 0.0f, 4.0f));
 	camera->AddComponent(new eng::PlayerControllerComponent());
 
 	m_scene->SetMainCamera(camera);
-
-	//m_scene->CreateObject<TestObject>("TestObject");
 
 	std::string vertexShaderSource = R"(
 		#version 330 core		
@@ -84,9 +82,7 @@ bool Game::Init()
 		4, 7, 6,
 		4, 6, 5
 	};
-
 	eng::VertexLayout rectVertexLayout;
-
 	// Position
 	rectVertexLayout.elements.push_back({
 		0,
@@ -102,23 +98,87 @@ bool Game::Init()
 		sizeof(float) * 3
 		});
 	rectVertexLayout.stride = sizeof(float) * 6;
-
 	auto mesh = std::make_shared<eng::Mesh>(rectVertexLayout, rectVertices, rectIndices);
 
-	auto objectA = m_scene->CreateObject("ObjectA");
-	objectA->AddComponent(new eng::MeshComponent(material, mesh));
-	objectA->SetPosition(glm::vec3(0.0f, 2.0f, 0.0f));
-	
-	auto objectB = m_scene->CreateObject("ObjectB");
-	objectB->AddComponent(new eng::MeshComponent(material, mesh));
-	objectB->SetPosition(glm::vec3(0.0f, 2.0f, 2.0f));
-	objectB->SetRotation(glm::vec3(2.0f, 1.0f, 0.0f));
+	std::vector<float> planeVerts =
+	{
+		0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+		0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+		0.5f, 0.0f, 0.5f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.5f, 1.0f, 0.0f, 0.0f
+	};
+	std::vector<unsigned int> planeIndices =
+	{
+		0, 1, 3,
+		2, 1, 3
+	};
+	eng::VertexLayout planeVertexLayout;
+	planeVertexLayout.elements.push_back({
+		0,
+		3,
+		GL_FLOAT,
+		0
+		});
+	// Color
+	planeVertexLayout.elements.push_back({
+		1,
+		3,
+		GL_FLOAT,
+		sizeof(float) * 3
+		});
+	planeVertexLayout.stride = sizeof(float) * 6;
+	auto planeMesh = std::make_shared<eng::Mesh>(planeVertexLayout, planeVerts, planeIndices);
 
-	auto objectC = m_scene->CreateObject("ObjectB");
-	objectC->AddComponent(new eng::MeshComponent(material, mesh));
-	objectC->SetPosition(glm::vec3(-2.0f, 0.0f, 0.0f));
-	objectC->SetRotation(glm::vec3(-2.0f, -1.0f, 0.0f));
-	objectC->SetScale(glm::vec3(1.5f, 1.5f, 1.0f));
+	std::vector<float> pyramidVerts =
+	{
+		0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+		0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+		0.25f, 0.5f, 0.125f, 0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 0.5f, 1.0f, 0.0f, 1.0f,		
+	};
+	std::vector<unsigned int> pyramidIndices =
+	{
+		0, 1, 2,
+		0, 3, 2,
+		2, 1, 3,
+		0, 1, 3
+	};
+	eng::VertexLayout pyramidVertexLayout;
+	pyramidVertexLayout.elements.push_back({
+	0,
+	3,
+	GL_FLOAT,
+	0
+		});
+	// Color
+	pyramidVertexLayout.elements.push_back({
+		1,
+		3,
+		GL_FLOAT,
+		sizeof(float) * 3
+		});
+	pyramidVertexLayout.stride = sizeof(float) * 6;
+	auto pyramidMesh = std::make_shared<eng::Mesh>(pyramidVertexLayout, pyramidVerts, pyramidIndices);
+
+	//auto objectA = m_scene->CreateObject("ObjectA");
+	//objectA->AddComponent(new eng::MeshComponent(material, mesh));
+	//objectA->SetPosition(glm::vec3(0.0f, 2.0f, 0.0f));
+	
+	auto cube = m_scene->CreateObject("cube");
+	cube->AddComponent(new eng::MeshComponent(material, mesh));
+	cube->SetPosition(glm::vec3(1.0f, 0.0f, 2.0f));
+	cube->SetRotation(glm::vec3(0.0f, 0.0f, 0.0f));	
+
+	auto pyramid = m_scene->CreateObject("ObjectB");
+	pyramid->AddComponent(new eng::MeshComponent(material, pyramidMesh));
+	pyramid->SetPosition(glm::vec3(-2.0f, 0.0f, 0.0f));
+	pyramid->SetRotation(glm::vec3(0.0f, 0.0f, 0.0f));
+	pyramid->SetScale(glm::vec3(2.0f, 2.0f, 2.0f));
+
+	//auto plane = m_scene->CreateObject("Plane");
+	//plane->AddComponent(new eng::MeshComponent(material, planeMesh));
+	//plane->SetPosition(glm::vec3(0.0f, -2.0f, 0.0f));
+	//plane->SetScale(glm::vec3(10.0f, 1.0f, 10.0f));
 
 	eng::Engine::GetInstance().SetScene(m_scene);
 	return true;
