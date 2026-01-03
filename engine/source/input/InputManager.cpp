@@ -19,4 +19,36 @@ namespace eng
 
 		return m_keys[key];
 	}
+	void InputManager::SetMouseButtonPressed(int button, bool pressed)
+	{
+		if (button < 0 || button >= static_cast<int>(m_mouseKeys.size()))
+		{
+			return;
+		}
+		m_mouseKeys[button] = pressed;
+	}
+	bool InputManager::IsMouseButtonPressed(int button)
+	{
+		if (button < 0 || button >= static_cast<int>(m_mouseKeys.size()))
+		{
+			return false;
+		}
+		return m_mouseKeys[button];
+	}
+	void InputManager::SetMousePoitionOld(const glm::vec2& pos)
+	{
+		m_mousePostionOld = pos;
+	}
+	const glm::vec2& InputManager::GetMousePoistionOld() const
+	{
+		return m_mousePostionOld;
+	}
+	void InputManager::SetMousePositionCurrent(const glm::vec2& pos) 
+	{
+		m_mousePostionCurrent = pos;
+	}
+	const glm::vec2& InputManager::GetMousePositionCurrent() const
+	{
+		return m_mousePostionCurrent;
+	}
 }

@@ -7,6 +7,11 @@
 
 namespace eng
 {
+	bool GraphicsAPI::Init()
+	{
+		glEnable(GL_DEPTH_TEST);
+		return true;
+	}
 	std::shared_ptr<ShaderProgram> GraphicsAPI::CreateShaderProgram(const std::string& vertexSource,
 		const std::string& fragmentSource)
 	{
@@ -110,6 +115,6 @@ namespace eng
 	}
 	void GraphicsAPI::ClearBuffers()
 	{
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 }

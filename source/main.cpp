@@ -11,6 +11,7 @@ int main()
 	if (engine.Init(1280, 720))
 	{
 		engine.Run();
+
 	}
 
 	engine.Destroy();

@@ -42,15 +42,36 @@ TestObject::TestObject()
 
 	std::vector<float> rectVertices =
 	{
-		0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-		-0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
-		-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
-		0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 0.0f
+		0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
+		-0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
+		-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+		0.5f, -0.5f, 0.5f, 1.0f, 1.0f, 0.0f,
+
+		0.5f, 0.5f, 0.5, 1.0f, 0.0f, 0.0f,
+		-0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f
 	};
 	std::vector<unsigned int> rectIndices =
 	{
+		// front face
 		0, 1, 2,
-		0, 2, 3
+		0, 2, 3,
+		// top face,
+		4, 5, 1,
+		4, 1, 0,
+		// right face
+		4, 0, 3,
+		4, 3, 7,
+		// left face
+		1, 5, 6, 
+		1, 6, 2,
+		// bottom face
+		3, 2, 6, 
+		3, 6, 7,
+		// back face
+		4, 7, 6,
+		4, 6, 5
 	};
 
 	eng::VertexLayout rectVertexLayout;
@@ -79,6 +100,7 @@ void TestObject::Update(float deltaTime)
 {
 	eng::GameObject::Update(deltaTime);
 
+#if 0
 	auto& input = eng::Engine::GetInstance().GetInputManager();
 	float moveSpeed = 2.0f * deltaTime;
 
@@ -101,5 +123,7 @@ void TestObject::Update(float deltaTime)
 	{
 		position.y -= moveSpeed;
 	}
+
 	SetPosition(position);	
+#endif
 }
